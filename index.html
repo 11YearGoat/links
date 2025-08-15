@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+<hea<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Goat Launcher • PWA</title>
+<title>Launcher • PWA</title>
 <meta name="theme-color" content="#6750A4" />
 
 <!-- Tailwind (CDN) -->
@@ -65,7 +67,7 @@
         <div class="flex items-center gap-3">
           <span class="material-symbols-rounded text-[28px]">rocket_launch</span>
           <div>
-            <h1 class="text-xl font-bold">Goat Launcher</h1>
+            <h1 class="text-xl font-bold">Launcher</h1>
             <p class="text-sm opacity-80">Paste links ➜ get shiny buttons. Installable PWA.</p>
           </div>
         </div>
@@ -115,7 +117,7 @@
         <button id="closeModal" class="ripple rounded-lg px-2 py-1"><span class="material-symbols-rounded">close</span></button>
       </div>
       <div class="p-4 sm:p-5">
-        <textarea id="linksInput" rows="10" placeholder="https://example.com\n11YearGoat.github.io/files\nm.youtube.com" class="w-full glass border rounded-xl p-3 outline-none"></textarea>
+        <textarea id="linksInput" rows="10" placeholder="https://example.com\n11Year.github.io/files\nm.youtube.com" class="w-full glass border rounded-xl p-3 outline-none"></textarea>
         <div class="flex items-center justify-between mt-3">
           <div class="text-xs opacity-70">Tips: blank lines ignored • http added if missing • duplicates removed</div>
           <div class="flex gap-2">
@@ -131,11 +133,10 @@
   <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 hidden glass rounded-xl px-4 py-2 text-sm shadow-m3-2"></div>
 
 <script>
-  // ===== Utilities =====
   const $ = (q) => document.querySelector(q);
   const $$ = (q) => Array.from(document.querySelectorAll(q));
   const root = document.documentElement;
-  const LS_KEY = "goat_links_v1";
+  const LS_KEY = "links_v1";
 
   function showToast(msg){
     const t = $('#toast');
@@ -154,9 +155,6 @@
     try{ new URL(s); return s; }catch{ return null; }
   }
 
-  function urlDomain(u){ try{ return new URL(u).origin; }catch{ return ''; }
-  }
-
   function faviconFor(u){
     try{ const ur = new URL(u); return `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(ur.origin)}`; }catch{ return '' }
   }
@@ -164,7 +162,6 @@
   function saveLinks(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
   function loadLinks(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch{ return [] } }
 
-  // ===== Theme =====
   const themeBtn = $('#themeBtn'), themeIcon = $('#themeIcon'), themeLabel = $('#themeLabel');
   const savedTheme = localStorage.getItem('theme');
   if(savedTheme==='dark' || (!savedTheme && matchMedia('(prefers-color-scheme: dark)').matches)) root.classList.add('dark');
@@ -172,7 +169,6 @@
   themeBtn.addEventListener('click', ()=>{ root.classList.toggle('dark'); localStorage.setItem('theme', root.classList.contains('dark')?'dark':'light'); updateThemeBtn(); });
   function updateThemeBtn(){ const d = root.classList.contains('dark'); themeIcon.textContent = d? 'light_mode':'dark_mode'; themeLabel.textContent = d? 'Light':'Dark'; }
 
-  // ===== Modal logic =====
   const modal = $('#modal');
   function openModal(){ modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(()=>$('#linksInput').focus(), 50); }
   function closeModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); }
@@ -180,7 +176,7 @@
   $('#firstAdd').addEventListener('click', openModal);
   $('#closeModal').addEventListener('click', closeModal);
   $('#sampleBtn').addEventListener('click',()=>{
-    $('#linksInput').value = `https://11YearGoat.github.io/files\nhttps://11YearGoat.github.io/gallery\nhttps://11YearGoat.github.io/Tictactoe\nhttps://11YearGoat.github.io/program_lang\nhttps://11YearGoat.github.io/geminiAPI\nhttps://11YearGoat.github.io/CPStester\nhttps://11YearGoat.github.io/notes\nhttps://11YearGoat.github.io/runnerGame\nhttps://11YearGoat.github.io/redirect\nhttps://11YearGoat.github.io/whiteboard\nhttps://11YearGoat.github.io/math_gui\nhttps://11YearGoat.github.io/math\nhttps://11YearGoat.github.io/clock`;
+    $('#linksInput').value = `https://11Year.github.io/files\nhttps://11Year.github.io/gallery\nhttps://11Year.github.io/Tictactoe\nhttps://11Year.github.io/program_lang\nhttps://11Year.github.io/geminiAPI\nhttps://11Year.github.io/CPStester\nhttps://11Year.github.io/notes\nhttps://11Year.github.io/runnerGame\nhttps://11Year.github.io/redirect\nhttps://11Year.github.io/whiteboard\nhttps://11Year.github.io/math_gui\nhttps://11Year.github.io/math\nhttps://11Year.github.io/clock`;
   });
 
   $('#saveLinks').addEventListener('click', ()=>{
@@ -194,7 +190,6 @@
     if(confirm('Reset all saved links?')){ localStorage.removeItem(LS_KEY); render(); openModal(); showToast('Reset complete'); }
   });
 
-  // ===== Render grid =====
   const grid = $('#grid');
   const empty = $('#emptyState');
   function render(){
@@ -205,7 +200,7 @@
 
     links
       .filter(u => !q || u.toLowerCase().includes(q))
-      .forEach((u, i)=>{
+      .forEach((u)=>{
         const name = new URL(u).hostname.replace(/^www\./,'');
         const li = document.createElement('li');
         li.innerHTML = `
@@ -224,18 +219,16 @@
   }
   $('#search').addEventListener('input', render);
 
-  // First run
   (function init(){
     render();
     if(!loadLinks().length) empty.classList.remove('hidden');
   })();
 
-  // ===== Manifest (Blob) =====
   (function makeManifest(){
     const iconSVG = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#EADDFF"/><stop offset="1" stop-color="#C8E6FF"/></linearGradient></defs><rect width="100" height="100" rx="20" fill="url(#g)"/><g fill="#2b2247"><path d="M50 16l9 18 20 3-15 14 4 20-18-9-18 9 4-20-15-14 20-3z"/></g></svg>');
     function pngData(size){ return `data:image/svg+xml;charset=utf-8,${iconSVG}`; }
     const manifest = {
-      name: "Goat Launcher",
+      name: "Launcher",
       short_name: "Launcher",
       start_url: ".",
       display: "standalone",
@@ -252,15 +245,13 @@
     link.rel = 'manifest'; link.href = url; document.head.appendChild(link);
   })();
 
-  // ===== Service Worker via Blob =====
   (async function registerSW(){
     if(!('serviceWorker' in navigator)) return;
     const swCode = `
-      const CACHE = 'goat-launcher-v1';
+      const CACHE = 'launcher-v1';
       self.addEventListener('install', e => {
         e.waitUntil((async()=>{
           const cache = await caches.open(CACHE);
-          // Cache the shell (this HTML) and Google fonts/icons users hit often
           try{ await cache.addAll(['./', self.location.href]); }catch(e){}
           self.skipWaiting();
         })());
@@ -268,11 +259,9 @@
       self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
       self.addEventListener('fetch', e => {
         const req = e.request;
-        // Network-first for everything; fallback to cache when offline
         e.respondWith((async()=>{
           try{
             const net = await fetch(req);
-            // put a copy in cache (ignore opaque errors)
             const cache = await caches.open(CACHE);
             cache.put(req, net.clone()).catch(()=>{});
             return net;
@@ -286,7 +275,284 @@
     const swURL = URL.createObjectURL(blob);
     try{
       const reg = await navigator.serviceWorker.register(swURL);
-      // PWA install prompt handling
+      let deferred; window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferred = e; $('#installBtn').classList.remove('hidden'); });
+      $('#installBtn').addEventListener('click', async()=>{ if(deferred){ deferred.prompt(); deferred = null; $('#installBtn').classList.add('hidden'); }});
+    }catch(err){ console.warn('SW registration failed', err); }
+  })();
+</script>
+</body>
+</html><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Launcher • PWA</title>
+<meta name="theme-color" content="#6750A4" />
+
+<!-- Tailwind (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: ["class", '[data-theme="dark"]'],
+    theme: {
+      extend: {
+        fontFamily: { display: ["Inter", "system-ui", "Segoe UI", "Arial"] },
+        colors: {
+          primary: { DEFAULT: "#6750A4", on: "#ffffff", tonal: "#EADDFF" },
+          outline: "#79747E",
+        },
+        boxShadow: {
+          "m3-1": "0 1px 2px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.24)",
+          "m3-2": "0 6px 12px rgba(0,0,0,.14), 0 2px 4px rgba(0,0,0,.12)",
+        },
+        keyframes: {
+          rise: {"0%":{transform:"translateY(12px)",opacity:.0},"100%":{transform:"translateY(0)",opacity:1}},
+          shimmer: {"0%":{backgroundPosition:"0% 50%"},"100%":{backgroundPosition:"200% 50%"}},
+          pop: {"0%":{transform:"scale(.96)"},"100%":{transform:"scale(1)"}},
+        },
+        animation: {
+          rise: "rise .35s ease-out",
+          shimmer: "shimmer 3s linear infinite",
+          pop: "pop .15s ease-out",
+        }
+      }
+    }
+  };
+</script>
+
+<!-- Fonts & Icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL,GRAD@0,0" rel="stylesheet" />
+
+<style>
+  :root{
+    --bg: #faf8ff; --fg:#1d1b20; --card:#ffffffcc; --border: rgba(25,25,35,.12);
+    --grad1:#EADDFF; --grad2:#C8E6FF; --grad3:#D0F8E6;
+  }
+  html.dark{ --bg:#0b1020; --fg:#e8def8; --card:#101624cc; --border:rgba(255,255,255,.08); --grad1:#1d1b20; --grad2:#1a2336; --grad3:#132a26; }
+  .cosmic{ background: linear-gradient(120deg, var(--grad1), var(--grad2), var(--grad3)); background-size:200% 200%; }
+  .glass{ backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: var(--card); border:1px solid var(--border); }
+  .ripple{ position:relative; overflow:hidden; }
+  .ripple:after{ content:""; position:absolute; inset:0; border-radius:inherit; transform:scale(0); background: radial-gradient(circle, rgba(255,255,255,.4) 10%, transparent 11%) center/10px 10px; opacity:0; transition: transform .45s ease, opacity .6s ease; }
+  .ripple:active:after{ transform:scale(6); opacity:1; }
+  *{ -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+
+<body class="min-h-screen font-display text-[15px] antialiased bg-[var(--bg)] text-[var(--fg)]">
+  <!-- Header -->
+  <header class="cosmic animate-shimmer">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 py-4">
+      <div class="glass rounded-2xl shadow-m3-1 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-rounded text-[28px]">rocket_launch</span>
+          <div>
+            <h1 class="text-xl font-bold">Launcher</h1>
+            <p class="text-sm opacity-80">Paste links ➜ get shiny buttons. Installable PWA.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="installBtn" class="hidden ripple glass rounded-xl border px-3 py-2 text-sm"><span class="material-symbols-rounded text-[20px] mr-1">download</span>Install</button>
+          <button id="themeBtn" class="ripple glass rounded-xl border px-3 py-2 text-sm">
+            <span id="themeIcon" class="material-symbols-rounded text-[20px] mr-1">dark_mode</span><span id="themeLabel">Dark</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Controls -->
+  <section class="mx-auto max-w-4xl px-4 sm:px-6 mt-4">
+    <div class="glass rounded-2xl shadow-m3-1 p-3 sm:p-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <button id="addBtn" class="ripple glass rounded-xl border px-3 py-2 text-sm"><span class="material-symbols-rounded text-[20px] mr-1">add</span>Add Links</button>
+        <button id="resetBtn" class="ripple glass rounded-xl border px-3 py-2 text-sm"><span class="material-symbols-rounded text-[20px] mr-1">restart_alt</span>Reset</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <input id="search" placeholder="Search links…" class="bg-transparent outline-none text-sm px-3 py-2 rounded-xl border glass w-40 sm:w-64" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid -->
+  <main class="mx-auto max-w-4xl px-4 sm:px-6 py-6">
+    <ul id="grid" class="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
+      <!-- items injected here -->
+    </ul>
+    <div id="emptyState" class="hidden text-center mt-10">
+      <button id="firstAdd" class="ripple glass rounded-2xl border shadow-m3-2 px-6 py-5 text-base">
+        <span class="material-symbols-rounded align-middle mr-2">playlist_add</span>
+        Add your first links
+      </button>
+      <p class="text-xs opacity-70 mt-3">Paste one per line. We will auto-add <code>https://</code> if missing.</p>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 hidden items-end sm:items-center justify-center z-50">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="glass w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-m3-2 animate-rise">
+      <div class="p-4 sm:p-5 border-b border-[var(--border)] flex items-center justify-between">
+        <h2 class="font-semibold">Paste links (one per line)</h2>
+        <button id="closeModal" class="ripple rounded-lg px-2 py-1"><span class="material-symbols-rounded">close</span></button>
+      </div>
+      <div class="p-4 sm:p-5">
+        <textarea id="linksInput" rows="10" placeholder="https://example.com\n11Year.github.io/files\nm.youtube.com" class="w-full glass border rounded-xl p-3 outline-none"></textarea>
+        <div class="flex items-center justify-between mt-3">
+          <div class="text-xs opacity-70">Tips: blank lines ignored • http added if missing • duplicates removed</div>
+          <div class="flex gap-2">
+            <button id="sampleBtn" class="ripple rounded-xl border px-3 py-2 text-sm">Fill sample</button>
+            <button id="saveLinks" class="ripple rounded-xl border px-4 py-2 text-sm bg-primary text-primary-on">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 hidden glass rounded-xl px-4 py-2 text-sm shadow-m3-2"></div>
+
+<script>
+  const $ = (q) => document.querySelector(q);
+  const $$ = (q) => Array.from(document.querySelectorAll(q));
+  const root = document.documentElement;
+  const LS_KEY = "links_v1";
+
+  function showToast(msg){
+    const t = $('#toast');
+    t.textContent = msg; t.classList.remove('hidden');
+    t.style.opacity = 0;
+    t.animate([{transform:'translateY(8px)',opacity:0},{transform:'translateY(0)',opacity:1}],{duration:180,fill:'forwards',easing:'ease-out'});
+    clearTimeout(t._h); t._h = setTimeout(()=>{
+      t.animate([{opacity:1},{opacity:0}],{duration:220,fill:'forwards'}).onfinish=()=>t.classList.add('hidden');
+    }, 1400);
+  }
+
+  function normalizeUrl(s){
+    s = s.trim();
+    if(!s) return null;
+    if(!/^https?:\/\//i.test(s)) s = 'https://' + s;
+    try{ new URL(s); return s; }catch{ return null; }
+  }
+
+  function faviconFor(u){
+    try{ const ur = new URL(u); return `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(ur.origin)}`; }catch{ return '' }
+  }
+
+  function saveLinks(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+  function loadLinks(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch{ return [] } }
+
+  const themeBtn = $('#themeBtn'), themeIcon = $('#themeIcon'), themeLabel = $('#themeLabel');
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme==='dark' || (!savedTheme && matchMedia('(prefers-color-scheme: dark)').matches)) root.classList.add('dark');
+  updateThemeBtn();
+  themeBtn.addEventListener('click', ()=>{ root.classList.toggle('dark'); localStorage.setItem('theme', root.classList.contains('dark')?'dark':'light'); updateThemeBtn(); });
+  function updateThemeBtn(){ const d = root.classList.contains('dark'); themeIcon.textContent = d? 'light_mode':'dark_mode'; themeLabel.textContent = d? 'Light':'Dark'; }
+
+  const modal = $('#modal');
+  function openModal(){ modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(()=>$('#linksInput').focus(), 50); }
+  function closeModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); }
+  $('#addBtn').addEventListener('click', openModal);
+  $('#firstAdd').addEventListener('click', openModal);
+  $('#closeModal').addEventListener('click', closeModal);
+  $('#sampleBtn').addEventListener('click',()=>{
+    $('#linksInput').value = `https://11Year.github.io/files\nhttps://11Year.github.io/gallery\nhttps://11Year.github.io/Tictactoe\nhttps://11Year.github.io/program_lang\nhttps://11Year.github.io/geminiAPI\nhttps://11Year.github.io/CPStester\nhttps://11Year.github.io/notes\nhttps://11Year.github.io/runnerGame\nhttps://11Year.github.io/redirect\nhttps://11Year.github.io/whiteboard\nhttps://11Year.github.io/math_gui\nhttps://11Year.github.io/math\nhttps://11Year.github.io/clock`;
+  });
+
+  $('#saveLinks').addEventListener('click', ()=>{
+    const raw = $('#linksInput').value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+    const fixed = Array.from(new Set(raw.map(normalizeUrl).filter(Boolean)));
+    if(fixed.length===0){ showToast('No valid links'); return; }
+    saveLinks(fixed); closeModal(); render(); showToast('Links saved');
+  });
+
+  $('#resetBtn').addEventListener('click', ()=>{
+    if(confirm('Reset all saved links?')){ localStorage.removeItem(LS_KEY); render(); openModal(); showToast('Reset complete'); }
+  });
+
+  const grid = $('#grid');
+  const empty = $('#emptyState');
+  function render(){
+    const q = $('#search').value.trim().toLowerCase();
+    const links = loadLinks();
+    grid.innerHTML = '';
+    if(!links.length){ empty.classList.remove('hidden'); return; } else empty.classList.add('hidden');
+
+    links
+      .filter(u => !q || u.toLowerCase().includes(q))
+      .forEach((u)=>{
+        const name = new URL(u).hostname.replace(/^www\./,'');
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <a href="${u}" target="_blank" rel="noopener" class="group ripple glass rounded-2xl border shadow-m3-1 block p-4 sm:p-5 animate-rise">
+            <div class="flex items-center gap-3">
+              <img src="${faviconFor(u)}" class="w-8 h-8 rounded-xl border" alt="icon" onerror="this.style.display='none'" />
+              <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-base sm:text-lg truncate">${name}</h3>
+                <p class="text-xs opacity-70 mt-1 break-all">${u}</p>
+              </div>
+              <span class="material-symbols-rounded opacity-60 group-hover:opacity-100 transition">north_east</span>
+            </div>
+          </a>`;
+        grid.appendChild(li);
+      });
+  }
+  $('#search').addEventListener('input', render);
+
+  (function init(){
+    render();
+    if(!loadLinks().length) empty.classList.remove('hidden');
+  })();
+
+  (function makeManifest(){
+    const iconSVG = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#EADDFF"/><stop offset="1" stop-color="#C8E6FF"/></linearGradient></defs><rect width="100" height="100" rx="20" fill="url(#g)"/><g fill="#2b2247"><path d="M50 16l9 18 20 3-15 14 4 20-18-9-18 9 4-20-15-14 20-3z"/></g></svg>');
+    function pngData(size){ return `data:image/svg+xml;charset=utf-8,${iconSVG}`; }
+    const manifest = {
+      name: "Launcher",
+      short_name: "Launcher",
+      start_url: ".",
+      display: "standalone",
+      background_color: "#0b1020",
+      theme_color: "#6750A4",
+      icons: [
+        { src: pngData(192), sizes: "192x192", type: "image/svg+xml" },
+        { src: pngData(512), sizes: "512x512", type: "image/svg+xml" }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest'; link.href = url; document.head.appendChild(link);
+  })();
+
+  (async function registerSW(){
+    if(!('serviceWorker' in navigator)) return;
+    const swCode = `
+      const CACHE = 'launcher-v1';
+      self.addEventListener('install', e => {
+        e.waitUntil((async()=>{
+          const cache = await caches.open(CACHE);
+          try{ await cache.addAll(['./', self.location.href]); }catch(e){}
+          self.skipWaiting();
+        })());
+      });
+      self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+      self.addEventListener('fetch', e => {
+        const req = e.request;
+        e.respondWith((async()=>{
+          try{
+            const net = await fetch(req);
+            const cache = await caches.open(CACHE);
+            cache.put(req, net.clone()).catch(()=>{});
+            return net;
+          }catch(err){
+            const cached = await caches.match(req, { ignoreSearch:true });
+            return cached || caches.match('./');
+          }
+        })());
+      });`;
+    const blob = new Blob([swCode], { type: 'text/javascript' });
+    const swURL = URL.createObjectURL(blob);
+    try{
+      const reg = await navigator.serviceWorker.register(swURL);
       let deferred; window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferred = e; $('#installBtn').classList.remove('hidden'); });
       $('#installBtn').addEventListener('click', async()=>{ if(deferred){ deferred.prompt(); deferred = null; $('#installBtn').classList.add('hidden'); }});
     }catch(err){ console.warn('SW registration failed', err); }
